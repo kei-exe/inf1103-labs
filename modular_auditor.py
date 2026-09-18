@@ -28,6 +28,8 @@ def get_valid_input():
 # 2. process_delivery(current_total, new_value): Calculates the new total and
 # returns it.
 def process_delivery(current_total, new_value):
+#   print("Tax: ", calculate_tax(stockQty))
+#   print("Current Deliveries Delivered: ", current_total)
     return current_total + new_value
 
 # 3. calculate_tax(amount): A new requirement! This function takes a delivery
@@ -49,11 +51,10 @@ while True:
         break
 
     stockQty = get_valid_input()  # Call the function to get valid input
-    if stockQty is "quit":
+    if stockQty == "quit":
         break  # Exit the loop if 'quit' was entered
     elif stockQty is None:
         failed_entries += 1
         continue  # Skip processing if input was invalid or 'quit' was entered
     
     inventory = process_delivery(inventory, stockQty)
-    print("Tax: ", calculate_tax(stockQty))
