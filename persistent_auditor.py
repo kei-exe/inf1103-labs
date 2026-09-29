@@ -1,82 +1,70 @@
-import os
+#init
+inventory = 0
+failed_entries = 0
+transaction_history = []  # List to store transaction history   
 
-# get_valid_input(): Handles the prompt, handles input validation, and returns a valid integer or a "quit" signal.
+# 1. get_valid_input(): Handles the prompt, handles input validation, and
+# returns a valid integer or a "quit" signal.
 def get_valid_input():
-    global stockName, stockQty
-
-    stockName = input("Enter Product Name (or type 'quit' to quit): ").strip()
-
-    # check if quit
-    if stockName == "quit":
+    #input
+    stockQty = input("Enter the stock quantity (or type 'quit' to quit): ")
+    
+    #check if quit
+    if stockQty.lower() == 'quit':
+        generate_report(inventory, failed_entries)
         return "quit"
-
-    # check valid stock name
-    if not stockName:
-        print("Stock name cannot be empty.")
-        return None
-    elif not stockName.replace(" ", "").isalpha():
-        print("Stock name must contain only letters.")
-        return None
-
-    # ONLY ask quantity after name is valid
-    stockQty = input("Enter Quantity: ")
-
-    # check if negative number
+    
+    #check -ve num
     if stockQty.startswith("-") and stockQty[1:].isdigit():
         print("Stock quantity cannot be negative.")
         return None
+        
+    #check non-digit
     elif not stockQty.isdigit():
         print("Please enter a valid number for stock quantity.")
         return None
 
-    return stockName, int(stockQty)
+    return int(stockQty)
 
-# save_inventory(total_units, transaction_history): Saves the current total and the transaction history list to the inventory file.
-def save_inventory(stockName, stockQty):
-    with open("inventory.txt", "a") as file:
-        file.write(f"{stockName}, {stockQty}\n")
-        for entry in transaction_history:
-            file.write(f"{entry}\n")
-    print(f"New Order Added: \n{len(transaction_history) + 1} {stockName}, {stockQty}")
-    print("Order successfully saved to inventory.txt.")
+# 2. process_delivery(current_total, new_value): Calculates the new total and
+# returns it.
+def process_delivery(current_total, new_value):
+#   print("Tax: ", calculate_tax(stockQty))
+#   print("Current Deliveries Delivered: ", current_total)
+    return current_total + new_value
 
-# load_inventory(): Reads the inventory file and returns the current total and the transaction history list.
-def load_inventory():
-    global transaction_history
-    transaction_history = []
-    
-    if os.path.exists("inventory.txt"):
-        with open("inventory.txt", "r") as file:
-            lines = file.readlines()
+# 3. calculate_tax(amount): A new requirement! This function takes a delivery
+# amount and returns the tax (10% of that specific delivery).
+def calculate_tax(amount):
+    tax = amount * 0.10
+    return tax
 
-            if lines:
-                transaction_history = [line.strip() for line in lines]
-                print("Current Orders:")
-                for entry in transaction_history:
-                    print(entry)
-    else:
-        print("No previous history found. Starting with an empty inventory.")
+# 4. generate_report(total_units, failed_attempts): A dedicated function to print
+# the final summary.
+def generate_report(total_units, failed_attempts):
+    print("Total Deliveries Processed: ", total_units)
+    print("Number of Failed/Rejected Entries: ", failed_attempts)
 
-# calculate_tax(amount): A new requirement! This function takes a delivery amount and returns the tax (10% of that specific delivery).
+def save_inventory(total_units, transaction_history):
+    with open("inventory.txt", "w") as file:
+        file.write(f"{total_units}\n") # saves the final inventory total
 
-# generate_report(total_units, failed_attempts): A dedicated function to print the final summary.
+        for transaction in transaction_history: # go through list and saves every transaction
+            file.write(f"{transaction}\n")
 
-# main
-# Persistence: At the start of the program, read the information previously saved in the inventory file. If the inventory file does not exist, 
-# start with an empty inventory and continue running without producing an error. 
-load_inventory() 
-# loop
+#loop
 while True:
-# check if inventory exceeds 500 units, break if true
-# call valid input function
-    stockName, stockQty = get_valid_input()  # Call the function to get valid input
-# exit if 'quit' was entered
-    if stockName == "quit":
-        save_inventory(stockName, stockQty)  # Save the current inventory before quitting
+     #check if inv exceed 500 units, break if true
+    if inventory >= 500:
         break
-# increment failed entries if input was invalid or 'quit' was entered
-    elif stockName is None or stockQty is None:
+
+    stockQty = get_valid_input()  # Call the function to get valid input
+    if stockQty == "quit":
+        save_inventory(inventory, transaction_history)
+        break  # Exit the loop if 'quit' was entered
+    elif stockQty is None:
         failed_entries += 1
         continue  # Skip processing if input was invalid or 'quit' was entered
-# add to inventory if input was valid
-    inventory = save_inventory(stockName, stockQty)
+    
+    inventory = process_delivery(inventory, stockQty)
+    transaction_history.append(stockQty)
