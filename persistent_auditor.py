@@ -1,3 +1,5 @@
+import os
+
 #init
 inventory = 0
 failed_entries = 0
@@ -45,6 +47,23 @@ def generate_report(total_units, failed_attempts):
     print("Total Deliveries Processed: ", total_units)
     print("Number of Failed/Rejected Entries: ", failed_attempts)
 
+#load_inv
+def load_inventory():
+    if not os.path.exists("inventory.txt"):
+        return 0, []
+
+    with open("inventory.txt", "r") as file:
+        lines = file.readlines()
+
+    total_units = int(lines[0])
+    transaction_history = []
+
+    for line in lines[1:]:
+        transaction_history.append(int(line.strip()))
+
+    return total_units, transaction_history
+
+# save_inv
 def save_inventory(total_units, transaction_history):
     with open("inventory.txt", "w") as file:
         file.write(f"{total_units}\n") # saves the final inventory total
@@ -52,6 +71,8 @@ def save_inventory(total_units, transaction_history):
         for transaction in transaction_history: # go through list and saves every transaction
             file.write(f"{transaction}\n")
 
+# main
+inventory, transaction_history = load_inventory()
 #loop
 while True:
      #check if inv exceed 500 units, break if true
