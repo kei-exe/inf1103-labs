@@ -1,91 +1,89 @@
 import os
 
 #init
-inventory = 0
 failed_entries = 0
 transaction_history = []  # List to store transaction history   
 
 # 1. get_valid_input(): Handles the prompt, handles input validation, and
 # returns a valid integer or a "quit" signal.
 def get_valid_input():
-    #input
-    stockQty = input("Enter the stock quantity (or type 'quit' to quit): ")
+    # name input
+    stockName = input("Enter product name: (or type 'quit' to quit) ").strip()
     
     #check if quit
-    if stockQty.lower() == 'quit':
-        generate_report(inventory, failed_entries)
+    if stockName.lower() == "quit":
         return "quit"
     
-    #check -ve num
+    #check empty
+    if not stockName:
+        print("Product name cannot be empty.")
+        return None
+    # check if name contains only letters and spaces
+    elif not stockName.replace(" ", "").isalpha():
+        print("Product name must contain only letters.")
+        return None
+
+    # qty input    
+    stockQty = input("Enter Quantity: ")
+
+    # check if -ve
     if stockQty.startswith("-") and stockQty[1:].isdigit():
         print("Stock quantity cannot be negative.")
         return None
-        
-    #check non-digit
+    #check if not digit
     elif not stockQty.isdigit():
         print("Please enter a valid number for stock quantity.")
         return None
 
-    return int(stockQty)
-
-# 2. process_delivery(current_total, new_value): Calculates the new total and
-# returns it.
-def process_delivery(current_total, new_value):
-#   print("Tax: ", calculate_tax(stockQty))
-#   print("Current Deliveries Delivered: ", current_total)
-    return current_total + new_value
-
-# 3. calculate_tax(amount): A new requirement! This function takes a delivery
-# amount and returns the tax (10% of that specific delivery).
-def calculate_tax(amount):
-    tax = amount * 0.10
-    return tax
-
-# 4. generate_report(total_units, failed_attempts): A dedicated function to print
-# the final summary.
-def generate_report(total_units, failed_attempts):
-    print("Total Deliveries Processed: ", total_units)
-    print("Number of Failed/Rejected Entries: ", failed_attempts)
+    return stockName, int(stockQty)
 
 #load_inv
 def load_inventory():
     if not os.path.exists("inventory.txt"):
-        return 0, []
+        return []
 
     with open("inventory.txt", "r") as file:
-        lines = file.readlines()
+        transaction_history = []
 
-    total_units = int(lines[0])
-    transaction_history = []
+        for line in file:
+            transaction_history.append(line.strip())
 
-    for line in lines[1:]:
-        transaction_history.append(int(line.strip()))
-
-    return total_units, transaction_history
+    return transaction_history
 
 # save_inv
-def save_inventory(total_units, transaction_history):
+def save_inventory(transaction_history):
     with open("inventory.txt", "w") as file:
-        file.write(f"{total_units}\n") # saves the final inventory total
+        for order in transaction_history:  # go through list and saves every transaction
+            file.write(order + "\n") # saves the final inventory total
 
-        for transaction in transaction_history: # go through list and saves every transaction
-            file.write(f"{transaction}\n")
+        print("\nSaved to inventory.txt")
 
 # main
-inventory, transaction_history = load_inventory()
+transaction_history = load_inventory()
+
+#initial prints
+print("Current orders:\n")
+for order in transaction_history:
+    print(order)
+print()
+
 #loop
 while True:
-     #check if inv exceed 500 units, break if true
-    if inventory >= 500:
+    userInput = get_valid_input()
+
+    if userInput == "quit":
+        save_inventory(transaction_history)
         break
 
-    stockQty = get_valid_input()  # Call the function to get valid input
-    if stockQty == "quit":
-        save_inventory(inventory, transaction_history)
-        break  # Exit the loop if 'quit' was entered
-    elif stockQty is None:
+    if userInput is None:
         failed_entries += 1
-        continue  # Skip processing if input was invalid or 'quit' was entered
-    
-    inventory = process_delivery(inventory, stockQty)
-    transaction_history.append(stockQty)
+        continue
+
+    stockName, stockQty = userInput
+    orderID = 1001 + len(transaction_history)
+
+    newOrder = f"{orderID}, {stockName}, {stockQty}"
+    transaction_history.append(newOrder)
+
+    print("\nNew Order Added:")
+    print(newOrder + "\n")
