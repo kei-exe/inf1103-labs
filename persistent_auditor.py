@@ -6,9 +6,20 @@ transaction_history = []  # List to store transaction history
 
 # 1. get_valid_input(): Handles the prompt, handles input validation, and
 # returns a valid integer or a "quit" signal.
+def display_menu():
+    print("------------- MENU -------------")
+    print("1. Display All products")
+    print("2. Add Product")
+    print("3. Update Stock")
+    print("4. Search Product")
+    print("5. Save Inventory")
+    print("6. Exit")
+    print("--------------------------\n")
+
+
 def get_valid_input():
     # name input
-    stockName = input("Enter product name: (or type 'quit' to quit) ").strip()
+    stockName = input("Enter option: ").strip()
     
     #check if quit
     if stockName.lower() == "quit":
@@ -62,10 +73,20 @@ def save_inventory(transaction_history):
 transaction_history = load_inventory()
 
 #initial prints
-print("Current orders:\n")
-for order in transaction_history:
-    print(order)
-print()
+print("================================")
+print("\nInventory Management System")
+print("\n================================\n")
+
+# check if file exists and print appropriate message
+if os.path.exists("inventory.txt"):
+    print("inventory.txt found\n")
+    print("inventory loaded successfully\n")
+else:
+    print("inventory.txt not found\n")
+    print("creating new inventory file\n")
+
+# display menu
+display_menu()
 
 #loop
 while True:

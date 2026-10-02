@@ -5,3 +5,4 @@
 1005, Phone, 2
 1006, Marker, 34
 1007, Lollipop, 3
+1008, a, 2
