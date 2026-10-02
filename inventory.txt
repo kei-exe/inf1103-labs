@@ -3,3 +3,5 @@
 1003, Laptop, 2
 1004, USB Cable, 3
 1005, Phone, 2
+1006, Marker, 34
+1007, Lollipop, 3
