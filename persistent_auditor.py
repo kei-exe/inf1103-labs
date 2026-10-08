@@ -1,13 +1,14 @@
 import os
+import json
 
 #init
 failed_entries = 0
-transaction_history = {}  # List to store transaction history   
+inventory = []
 
 # 1. get_valid_input(): Handles the prompt, handles input validation, and
 # returns a valid integer or a "quit" signal.
 def display_menu():
-    print("------------- MENU -------------")
+    print("\n\n------------- MENU -------------")
     print("1. Display All products")
     print("2. Add Product")
     print("3. Update Stock")
@@ -18,40 +19,21 @@ def display_menu():
 
 #load_inv
 def load_inventory():
-    transaction_history = {}
+    if not os.path.exists("inventory.json"):
+        return []
 
-    if not os.path.exists("inventory.txt"):
-        return transaction_history
+    try:
+        with open("inventory.json", "r") as file:
+            return json.load(file)
 
-    with open("inventory.txt", "r") as file:
-        for line in file:
-            data = line.strip().split("| ")
-
-            orderID = int(data[0])
-            stockName = data[1]
-            stockPrice = float(data[2])
-            stockQty = int(data[3])
-
-            transaction_history[orderID] = [
-                stockName,
-                stockPrice,
-                stockQty]
-
-    return transaction_history
+    except (json.JSONDecodeError, OSError):
+        print("Unable to load inventory.")
+        return []
 
 # save_inv
 def save_inventory(transaction_history):
-    with open("inventory.txt", "w") as file:
-
-        for product_id, product in transaction_history.items():
-            stockName = product[0]
-            stockPrice = product[1]
-            stockQty = product[2]
-
-            file.write(
-                f"{product_id}, {stockName}, {stockPrice}, {stockQty}\n") # saves the final inventory total
-
-        print("\nSaved to inventory.txt")
+    with open("inventory.json", "w") as file:
+        json.dump(transaction_history, file, indent=4)
 
 def display_input():
     displayInput = input("\nEnter option: ").strip()
@@ -67,18 +49,7 @@ def display_input():
 
     return int(displayInput)
 
-# 1
-def display_all():
-    if not transaction_history:
-        print("Inventory is empty.")
-        return
 
-    for product_id, product in transaction_history.items():
-        print("Product ID:", product_id)
-        print("Name:", product[0])
-        print("Stock:", product[1])
-
-# 2
 def get_valid_input():
     # name input
     stockName = input("Product Name: ").strip()
@@ -120,28 +91,62 @@ def get_valid_input():
 
     return stockName, stockPrice, int(stockQty)
 
+# 1
+def display_all():
+    if not inventory:
+        print("Inventory is empty.")
+        return
+
+    for product in inventory:
+        print(
+            f"ID: {product['product_id']} | "
+            f"Name: {product['name']} | "
+            f"Price: ${product['price']:.2f} | "
+            f"Stock: {product['stock']}"
+        )
+
+# 2
+def add_product():
+    new_order = get_valid_input()
+
+    if new_order is None:
+        return
+
+    stockName, stockPrice, stockQty = new_order
+
+    if inventory:
+        last_id = max(int(product_id[1:]) for product_id in inventory)
+        orderID = f"P{last_id + 1:03d}"
+    else:
+        orderID = "P001"
+
+    inventory[orderID] = [
+        stockName,
+        stockPrice,
+        stockQty
+    ]
+
+    print("Product ID:", orderID)
+    print("Product added successfully!")
+
 # 3
 def update_stock():
-    with open("inventory.txt", "w") as file:
-        product_id = int(input("Enter Product ID: ")).strip()
-           
-    # Validate Product ID
-    if not product_id.isdigit():
+    product_id = input("Enter Product ID: ").strip().upper()
+
+    if not product_id.startswith("P") or not product_id[1:].isdigit():
         print("Invalid Product ID.")
         return
 
-    product_id = int(product_id)
-
     # Check if product exists
-    if product_id in transaction_history:
+    if product_id in inventory:
         print("Product Found")
         print("====================")
         print("Product ID:", product_id)
-        print("Name:", transaction_history[product_id][0])
-        print("Current Stock:", transaction_history[product_id][1])
+        print("Name:", inventory[product_id][0])
+        print("Current Stock:", inventory[product_id][2])
         print("====================")
 
-        new_stock = input("\nNew stock quantity: ").strip()
+        new_stock = input("New stock quantity: ").strip()
 
         # Validate new stock
         if not new_stock.isdigit():
@@ -149,31 +154,36 @@ def update_stock():
             return
 
         # Update stock
-        transaction_history[product_id][2] = int(new_stock)
+        inventory[product_id][2] = int(new_stock)
 
         print("\nStock updated successfully.")
+
     else:
         print("Product not found.")
  
 # 4
 def search_product():
-    product_id = int(input("Enter Product ID: "))
+    product_id = input("Enter Product ID: ").strip().upper()
 
-    if product_id in transaction_history:
+    if not product_id.startswith("P") or not product_id[1:].isdigit():
+        print("Invalid Product ID.")
+        return
+
+    if product_id in inventory:
         print("Product Found")
         print("====================")
         print("Product ID: ", product_id)
-        print("Name: ", transaction_history[product_id][0])
-        print("Price: $", transaction_history[product_id][1])
-        print("Stock: ", transaction_history[product_id][2])
+        print("Name: ", inventory[product_id][0])
+        print("Price: $", f"{inventory[product_id][1]:.2f}")
+        print("Stock: ", inventory[product_id][2])
         print("====================")
-        print(transaction_history[product_id])
+        # print(inventory[product_id])
 
     else:
         print("Product not found.")
 
 # main
-transaction_history = load_inventory()
+inventory = load_inventory()
 
 #initial prints
 print("================================")
@@ -181,18 +191,18 @@ print("Inventory Management System")
 print("================================\n")
 
 # check if file exists and print appropriate message
-if os.path.exists("inventory.txt"):
-    print("inventory.txt found")
-    print("inventory loaded successfully\n")
+if os.path.exists("inventory.json"):
+    print("inventory.json found.")
+    print("Inventory loaded successfully.")
 else:
-    print("inventory.txt not found")
-    print("creating new inventory file\n")
+    print("inventory.json not found.")
+    print("Starting with empty inventory.")
 
-# display menu
-display_menu()
 
 #loop
 while True:
+    # display menu
+    display_menu()
     userInput = display_input()
 
     # quit
@@ -204,19 +214,7 @@ while True:
             print("====================")
         case 2: # add product
             print("\nAdd New Product") # header
-            new_order = get_valid_input()
-            if new_order is None:
-                continue  # Invalid input, prompt again
-            else:
-                stockName, stockPrice, stockQty = new_order
-
-                orderID = 000 + len(transaction_history)
-                transaction_history[orderID] = [
-                    stockName,
-                    stockPrice,
-                    stockQty]
-
-                print("\nProduct added successfully!")
+            add_product()
         case 3: # update stock
             print("Update Stock")
             update_stock()
@@ -224,13 +222,13 @@ while True:
             print("Search Product")
             search_product()
         case 5: # save inventory
-            save_inventory(transaction_history)
+            save_inventory(inventory)
             print("Saving inventory...")
-            print("Inventory saved successfully to inventory.txt.\n")
+            print("Inventory saved successfully to inventory.json.\n")
 
         case 6: # exit
-            save_inventory(transaction_history)
             print("Saving inventory before exit...")
+            save_inventory(transaction_history)
             print("Inventory saved successfully.\n")
 
             print("Thank you for using the Inventory Management System. Goodbye!")
