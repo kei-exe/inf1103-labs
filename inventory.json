@@ -4,5 +4,11 @@
         "name": "Laptop",
         "price": 1200.0,
         "stock": 30
+    },
+    {
+        "product_id": "P002",
+        "name": "Mouse",
+        "price": 25.0,
+        "stock": 40
     }
 ]

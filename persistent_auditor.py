@@ -115,16 +115,17 @@ def add_product():
     stockName, stockPrice, stockQty = new_order
 
     if inventory:
-        last_id = max(int(product_id[1:]) for product_id in inventory)
+        last_id = max(int(product["product_id"][1:]) for product in inventory)
         orderID = f"P{last_id + 1:03d}"
     else:
         orderID = "P001"
 
-    inventory[orderID] = [
-        stockName,
-        stockPrice,
-        stockQty
-    ]
+    inventory.append({
+    "product_id": orderID,
+    "name": stockName,
+    "price": stockPrice,
+    "stock": stockQty
+    })
 
     print("Product ID:", orderID)
     print("Product added successfully!")
@@ -138,12 +139,13 @@ def update_stock():
         return
 
     # Check if product exists
-    if product_id in inventory:
-        print("Product Found")
+    product = next((item for item in inventory if item["product_id"] == product_id), None)
+    if product:
+        print("\nProduct Found")
         print("====================")
-        print("Product ID:", product_id)
-        print("Name:", inventory[product_id][0])
-        print("Current Stock:", inventory[product_id][2])
+        print("Product ID:", product["product_id"])
+        print("Name:", product["name"])
+        print("Current Stock:", product["stock"])
         print("====================")
 
         new_stock = input("New stock quantity: ").strip()
@@ -154,7 +156,7 @@ def update_stock():
             return
 
         # Update stock
-        inventory[product_id][2] = int(new_stock)
+        product["stock"] = int(new_stock)
 
         print("\nStock updated successfully.")
 
@@ -169,18 +171,18 @@ def search_product():
         print("Invalid Product ID.")
         return
 
-    if product_id in inventory:
-        print("Product Found")
+    product = next((item for item in inventory if item["product_id"] == product_id), None)
+    if product:
+        print("\nProduct Found")
         print("====================")
-        print("Product ID: ", product_id)
-        print("Name: ", inventory[product_id][0])
-        print("Price: $", f"{inventory[product_id][1]:.2f}")
-        print("Stock: ", inventory[product_id][2])
+        print("Product ID: ", product["product_id"])
+        print("Name: ", product["name"])
+        print("Price: $", f"{product["price"]:.2f}")
+        print("Stock: ", product["stock"])
         print("====================")
-        # print(inventory[product_id])
 
     else:
-        print("Product not found.")
+        print("\nProduct not found.")
 
 # main
 inventory = load_inventory()
@@ -224,11 +226,11 @@ while True:
         case 5: # save inventory
             save_inventory(inventory)
             print("Saving inventory...")
-            print("Inventory saved successfully to inventory.json.\n")
+            print("Inventory saved successfully to inventory.json.")
 
         case 6: # exit
-            print("Saving inventory before exit...")
-            save_inventory(transaction_history)
+            print("\nSaving inventory before exit...")
+            save_inventory(inventory)
             print("Inventory saved successfully.\n")
 
             print("Thank you for using the Inventory Management System. Goodbye!")
