@@ -8,6 +8,17 @@ class Product:
     def get_product_id(self) -> str:
         return self.__product_id
 
+    def to_dict(self):
+
+        product_details = {
+            "product_id": self.__product_id,
+            "name": self.__name,
+            "price": self.__price,
+            "stock": self.__stock
+        }
+
+        return product_details
+
     def update_stock(self, quantity: int):
         if quantity < 0:
             print("Stock cannot be negative.")
