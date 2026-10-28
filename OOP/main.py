@@ -152,7 +152,7 @@ while True:
             # Generate product ID
             if inventory.get_all_products():
                 last_id = max(
-                    int(product.get_product_id()[1:])
+                    int(product.to_dict()["product_id"][1:])
                     for product in inventory.get_all_products()
                 )
                 orderID = f"P{last_id + 1:03d}"

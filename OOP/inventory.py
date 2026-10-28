@@ -6,7 +6,7 @@ class Inventory:
 
     # Getter for list of Product objects stored in self.__products
     def get_all_products(self):
-        return self.__products
+        return self.__products.copy() # read collection without directly modifying the list
 
      # Add products to inv
     def add_product(self, product : Product):

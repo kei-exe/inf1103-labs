@@ -5,7 +5,7 @@ class Product:
         self.__price = price
         self.__stock = stock
 
-    # Getter for product individual details
+    # Convert Product object into a dictionary for JSON storage
     def to_dict(self):
 
         product_details = {
