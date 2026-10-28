@@ -23,17 +23,26 @@ def display_menu():
     print("--------------------------")
 
 #load_inv
-def load_inventory():
+def load_inventory(inventory: Inventory):
+    # check if json file exists
     if not os.path.exists("inventory.json"):
-        return []
-
+        return
+            
     try:
         with open("inventory.json", "r") as file:
-            return json.load(file)
+            data = json.load(file)
+            for item in data:
+                product = Product(
+                    item["product_id"],
+                    item["name"],
+                    item["price"],
+                    item["stock"]
+                )
 
+                inventory.add_product(product)
+                
     except (json.JSONDecodeError, OSError):
         print("Unable to load inventory.")
-        return []
 
 # save_inv
 def save_inventory(transaction_history):
