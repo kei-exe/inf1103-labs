@@ -1,9 +1,14 @@
+# external
 import os
 import json
 
+# classes
+from product import Product
+from inventory import Inventory
+
 #init
 failed_entries = 0
-inventory = []
+inventory = Inventory()
 
 # 1. get_valid_input(): Handles the prompt, handles input validation, and
 # returns a valid integer or a "quit" signal.
