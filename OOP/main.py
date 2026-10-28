@@ -239,7 +239,22 @@ while True:
             add_product()
         case 3: # update stock
             print("Update Stock")
-            update_stock()
+            product_id = input("Enter Product ID: ").strip().upper()
+            result = inventory.search_product(product_id)
+
+            if result is not None:
+                new_stock = int(input("New stock quantity: ").strip())
+
+                # Validate new stock
+                if not new_stock.isdigit():
+                    print("Invalid stock quantity.")
+                    continue
+
+                # Update stock
+                result.update_stock(new_stock)
+                print("\nStock updated successfully.")
+            else:
+                print("Product not found.")
         case 4: # search product
             print("Search Product")
             # Ask User for input
@@ -250,7 +265,6 @@ while True:
                 result.display_information()
             else:
                 print("Product not found.")
-
         case 5: # save inventory
             save_inventory(inventory)
             print("Saving inventory...")
