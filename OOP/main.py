@@ -41,7 +41,7 @@ def load_inventory(inventory: Inventory):
 
                 inventory.add_product(product)
 
-    except (json.JSONDecodeError, OSError):
+    except (json.JSONDecodeError, OSError, KeyError, TypeError, ValueError):
         print("Unable to load inventory.")
 
 # save_inv
@@ -68,7 +68,6 @@ def display_input():
         return None
 
     return int(displayInput)
-
 
 def get_valid_input():
     # name input
@@ -111,99 +110,6 @@ def get_valid_input():
 
     return stockName, stockPrice, int(stockQty)
 
-# 1
-def display_all():
-    if not inventory:
-        print("Inventory is empty.")
-        return
-
-    for product in inventory:
-        print(
-            f"ID: {product['product_id']} | "
-            f"Name: {product['name']} | "
-            f"Price: ${product['price']:.2f} | "
-            f"Stock: {product['stock']}"
-        )
-
-# 2
-def add_product():
-    new_order = get_valid_input()
-
-    if new_order is None:
-        return
-
-    stockName, stockPrice, stockQty = new_order
-
-    if inventory:
-        last_id = max(int(product["product_id"][1:]) for product in inventory)
-        orderID = f"P{last_id + 1:03d}"
-    else:
-        orderID = "P001"
-
-    inventory.append({
-    "product_id": orderID,
-    "name": stockName,
-    "price": stockPrice,
-    "stock": stockQty
-    })
-
-    print("Product ID:", orderID)
-    print("Product added successfully!")
-
-# 3
-def update_stock():
-    product_id = input("Enter Product ID: ").strip().upper()
-
-    if not product_id.startswith("P") or not product_id[1:].isdigit():
-        print("Invalid Product ID.")
-        return
-
-    # Check if product exists
-    product = next((item for item in inventory if item["product_id"] == product_id), None)
-    if product:
-        print("\nProduct Found")
-        print("====================")
-        print("Product ID:", product["product_id"])
-        print("Name:", product["name"])
-        print("Current Stock:", product["stock"])
-        print("====================")
-
-        new_stock = input("New stock quantity: ").strip()
-
-        # Validate new stock
-        if not new_stock.isdigit():
-            print("Invalid stock quantity.")
-            return
-
-        # Update stock
-        product["stock"] = int(new_stock)
-
-        print("\nStock updated successfully.")
-
-    else:
-        print("Product not found.")
- 
-# 4
-def search_product():
-    product_id = input("Enter Product ID: ").strip().upper()
-
-    if not product_id.startswith("P") or not product_id[1:].isdigit():
-        print("Invalid Product ID.")
-        return
-
-    product = next((item for item in inventory if item["product_id"] == product_id), None)
-    if product:
-        print("\nProduct Found")
-        print("====================")
-        print("Product ID: ", product["product_id"])
-        print("Name: ", product["name"])
-        print("Price: $", f"{product["price"]:.2f}")
-        print("Stock: ", product["stock"])
-        print("====================")
-
-    else:
-        print("\nProduct not found.")
-
 # main
 load_inventory(inventory)
 
@@ -220,7 +126,6 @@ else:
     print("inventory.json not found.")
     print("Starting with empty inventory.")
 
-
 #loop
 while True:
     # display menu
@@ -236,14 +141,39 @@ while True:
             print("====================")
         case 2: # add product
             print("\nAdd New Product") # header
-            add_product()
+             # Get user inputs
+            new_order = get_valid_input()
+
+            if new_order is None:
+                continue
+
+            stockName, stockPrice, stockQty = new_order
+
+            # Generate product ID
+            if inventory.get_all_products():
+                last_id = max(
+                    int(product.get_product_id()[1:])
+                    for product in inventory.get_all_products()
+                )
+                orderID = f"P{last_id + 1:03d}"
+            else:
+                orderID = "P001"
+
+            # Create Product object
+            product = Product(orderID, stockName, stockPrice, stockQty)
+
+            # Add product to inventory
+            inventory.add_product(product)
+
+            print("Product ID:", orderID)
+            print("Product added successfully!")
         case 3: # update stock
             print("Update Stock")
             product_id = input("Enter Product ID: ").strip().upper()
             result = inventory.search_product(product_id)
 
             if result is not None:
-                new_stock = int(input("New stock quantity: ").strip())
+                new_stock = input("New stock quantity: ").strip()
 
                 # Validate new stock
                 if not new_stock.isdigit():
@@ -251,7 +181,7 @@ while True:
                     continue
 
                 # Update stock
-                result.update_stock(new_stock)
+                result.update_stock(int(new_stock))
                 print("\nStock updated successfully.")
             else:
                 print("Product not found.")
