@@ -20,7 +20,7 @@ def display_menu():
     print("4. Search Product")
     print("5. Save Inventory")
     print("6. Exit")
-    print("--------------------------")
+    print("----------------------------------")
 
 #load_inv
 def load_inventory(inventory: Inventory):
@@ -135,12 +135,13 @@ while True:
     # quit
     match userInput:
         case 1: # display all products
-            print("Current Inventory")
+            print("\nCurrent Inventory")
             print("====================")
             inventory.display_all()
             print("====================")
         case 2: # add product
             print("\nAdd New Product") # header
+            print("------------------") # separator line
              # Get user inputs
             new_order = get_valid_input()
 
@@ -166,13 +167,16 @@ while True:
             inventory.add_product(product)
 
             print("Product ID:", orderID)
-            print("Product added successfully!")
+            print("\n\nProduct added successfully!")
         case 3: # update stock
-            print("Update Stock")
+            print("\nUpdate Stock")
             product_id = input("Enter Product ID: ").strip().upper()
             result = inventory.search_product(product_id)
 
             if result is not None:
+                print("\n Product Found:")
+                print(f"Name: {result.to_dict()["name"]}")
+                print(f"Current Stock: {result.to_dict()["stock"]}\n")
                 new_stock = input("New stock quantity: ").strip()
 
                 # Validate new stock
@@ -186,18 +190,19 @@ while True:
             else:
                 print("Product not found.")
         case 4: # search product
-            print("Search Product")
+            print("\nSearch Product")
             # Ask User for input
             product_id = input("Enter Product ID: ").strip().upper()
             result = inventory.search_product(product_id)
 
             if result is not None:
+                print("Product Found\n")
                 result.display_information()
             else:
                 print("Product not found.")
         case 5: # save inventory
             save_inventory(inventory)
-            print("Saving inventory...")
+            print("\nSaving inventory...")
             print("Inventory saved successfully to inventory.json.")
 
         case 6: # exit
@@ -206,7 +211,7 @@ while True:
             print("Inventory saved successfully.\n")
 
             print("Thank you for using the Inventory Management System. Goodbye!")
-            print("Program terminated./n")
+            print("Program terminated.\n")
             break
 
         case _:
