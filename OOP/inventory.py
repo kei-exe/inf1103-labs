@@ -4,7 +4,12 @@ class Inventory:
     def __init__(self):
         self.__products = []
 
-    def add_product(self, product : Product): # Add products to inv
+    # Getter for list of Product objects stored in self.__products
+    def get_all_products(self):
+        return self.__products
+
+     # Add products to inv
+    def add_product(self, product : Product):
         self.__products.append(product)
 
     def search_product(self, product_id: str):
