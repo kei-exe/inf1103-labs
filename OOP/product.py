@@ -26,10 +26,8 @@ class Product:
 
     def display_information(self):
         print(
-            "-------------------------------\n"
             f"ID: {self.__product_id} | "
             f"Name: {self.__name} | "
             f"Price: ${self.__price:.2f} | "
             f"Stock: {self.__stock}",
-            "\n-------------------------------"
         )
