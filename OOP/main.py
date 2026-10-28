@@ -196,8 +196,8 @@ while True:
             result = inventory.search_product(product_id)
 
             if result is not None:
-                print("Product Found\n",
-                      "-------------------------------")
+                print("\nProduct Found")
+                print("-------------------------------")
                 result.display_information()
                 print("-------------------------------")
             else:
