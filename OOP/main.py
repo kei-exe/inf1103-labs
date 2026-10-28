@@ -136,12 +136,12 @@ while True:
     match userInput:
         case 1: # display all products
             print("\nCurrent Inventory")
-            print("====================")
+            print("=======================================================")
             inventory.display_all()
-            print("====================")
+            print("=======================================================")
         case 2: # add product
             print("\nAdd New Product") # header
-            print("------------------") # separator line
+            print("==================") # separator line
              # Get user inputs
             new_order = get_valid_input()
 
@@ -167,7 +167,7 @@ while True:
             inventory.add_product(product)
 
             print("Product ID:", orderID)
-            print("\n\nProduct added successfully!")
+            print("\nProduct added successfully!")
         case 3: # update stock
             print("\nUpdate Stock")
             product_id = input("Enter Product ID: ").strip().upper()
@@ -197,11 +197,11 @@ while True:
 
             if result is not None:
                 print("\nProduct Found")
-                print("-------------------------------")
+                print("=======================================================")
                 result.display_information()
-                print("-------------------------------")
+                print("=======================================================")
             else:
-                print("Product not found.")
+                print("\nProduct not found.")
         case 5: # save inventory
             save_inventory(inventory)
             print("\nSaving inventory...")

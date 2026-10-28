@@ -9,7 +9,7 @@
         "product_id": "P002",
         "name": "Mouse",
         "price": 25.0,
-        "stock": 50
+        "stock": 40
     },
     {
         "product_id": "P003",
@@ -22,5 +22,11 @@
         "name": "Keyboard",
         "price": 45.0,
         "stock": 25
+    },
+    {
+        "product_id": "P005",
+        "name": "PC",
+        "price": 2400.32,
+        "stock": 10
     }
 ]
