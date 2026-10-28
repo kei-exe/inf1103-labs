@@ -40,14 +40,20 @@ def load_inventory(inventory: Inventory):
                 )
 
                 inventory.add_product(product)
-                
+
     except (json.JSONDecodeError, OSError):
         print("Unable to load inventory.")
 
 # save_inv
-def save_inventory(transaction_history):
+def save_inventory(inventory: Inventory):
+    data = []
+
+    for product in inventory.get_all_products():
+        # Append dictionary to data
+        data.append(product.to_dict())
+
     with open("inventory.json", "w") as file:
-        json.dump(transaction_history, file, indent=4)
+        json.dump(data, file, indent=4)
 
 def display_input():
     displayInput = input("\nEnter option: ").strip()
@@ -199,7 +205,7 @@ def search_product():
         print("\nProduct not found.")
 
 # main
-inventory = load_inventory()
+load_inventory(inventory)
 
 #initial prints
 print("================================")
@@ -226,7 +232,7 @@ while True:
         case 1: # display all products
             print("Current Inventory")
             print("====================")
-            display_all()
+            inventory.display_all()
             print("====================")
         case 2: # add product
             print("\nAdd New Product") # header
@@ -236,7 +242,15 @@ while True:
             update_stock()
         case 4: # search product
             print("Search Product")
-            search_product()
+            # Ask User for input
+            product_id = input("Enter Product ID: ").strip().upper()
+            result = inventory.search_product(product_id)
+
+            if result is not None:
+                result.display_information()
+            else:
+                print("Product not found.")
+
         case 5: # save inventory
             save_inventory(inventory)
             print("Saving inventory...")
