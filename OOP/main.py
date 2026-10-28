@@ -175,8 +175,8 @@ while True:
 
             if result is not None:
                 print("\n Product Found:")
-                print(f"Name: {result.to_dict()["name"]}")
-                print(f"Current Stock: {result.to_dict()["stock"]}\n")
+                print(f"Name: {result.to_dict()['name']}")
+                print(f"Current Stock: {result.to_dict()['stock']}\n")
                 new_stock = input("New stock quantity: ").strip()
 
                 # Validate new stock
