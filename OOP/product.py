@@ -5,7 +5,7 @@ class Product:
         self.__price = price
         self.__stock = stock
 
-    def Get_productID(self):
+    def get_product_id(self) -> str:
         return self.__product_id
 
     def update_stock(self, quantity: int):
