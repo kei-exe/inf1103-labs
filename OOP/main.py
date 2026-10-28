@@ -13,8 +13,8 @@ inventory = Inventory()
 # 1. get_valid_input(): Handles the prompt, handles input validation, and
 # returns a valid integer or a "quit" signal.
 def display_menu():
-    print("\n\n------------- MENU -------------")
-    print("1. Display All products")
+    print("\n------------- MENU -------------")
+    print("1. Display All Products")
     print("2. Add Product")
     print("3. Update Stock")
     print("4. Search Product")
@@ -206,7 +206,7 @@ while True:
             print("Inventory saved successfully.\n")
 
             print("Thank you for using the Inventory Management System. Goodbye!")
-            print("Program terminated.")
+            print("Program terminated./n")
             break
 
         case _:
