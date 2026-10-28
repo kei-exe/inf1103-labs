@@ -5,9 +5,7 @@ class Product:
         self.__price = price
         self.__stock = stock
 
-    def get_product_id(self) -> str:
-        return self.__product_id
-
+    # Getter for product individual details
     def to_dict(self):
 
         product_details = {

@@ -14,7 +14,7 @@ class Inventory:
 
     def search_product(self, product_id: str):
         for product in self.__products: # Loop through all products in self.__products
-            if product.get_product_id() == product_id: # Check if product_id matches
+            if product.to_dict()["product_id"] == product_id: # Check if product_id matches
                 return product # return if match
 
         return None # return nothing if don't match
