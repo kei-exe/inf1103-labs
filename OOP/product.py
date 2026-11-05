@@ -1,4 +1,7 @@
-class Product:
+# import abstract class
+from abc import ABC, abstractmethod
+
+class Product(ABC):
     def __init__(self, product_id, name, price, stock):
         self.__product_id = product_id
         self.__name = name
