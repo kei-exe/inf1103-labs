@@ -8,6 +8,10 @@ class Product(ABC):
         self.__price = price
         self.__stock = stock
 
+    @abstractmethod # every subclass must implement this method
+    def get_fulfilment_information(self):
+        pass
+
     # Convert Product object into a dictionary for JSON storage
     def to_dict(self):
 
