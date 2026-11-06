@@ -14,5 +14,13 @@
         "stock": 5,
         "product_type": "digital",
         "download_size": 500.0
+    },
+    {
+        "product_id": "P003",
+        "name": "ROM",
+        "price": 5.0,
+        "stock": 10000,
+        "product_type": "digital",
+        "download_size": 350.0
     }
 ]
