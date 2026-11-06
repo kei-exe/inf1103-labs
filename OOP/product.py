@@ -37,4 +37,5 @@ class Product(ABC):
             f"Name: {self.__name} | "
             f"Price: ${self.__price:.2f} | "
             f"Stock: {self.__stock}",
+            end=""
         )

@@ -111,12 +111,30 @@ def load_inventory(inventory: Inventory):
         with open("inventory.json", "r") as file:
             data = json.load(file)
             for item in data:
-                product = Product(
-                    item["product_id"],
-                    item["name"],
-                    item["price"],
-                    item["stock"]
-                )
+                match item["product_type"]:
+                    case "physical":
+                        # Create PhysicalProduct
+                        product = PhysicalProduct(
+                            item["product_id"],
+                            item["name"], 
+                            item["price"], 
+                            item["stock"], 
+                            item["weight"]
+                            )
+
+                    case "digital":
+                        # Create DigitalProduct
+                        product = DigitalProduct(
+                            item["product_id"],
+                            item["name"], 
+                            item["price"], 
+                            item["stock"], 
+                            item["download_size"]
+                            )
+
+                    case _:
+                        print("Unknown product type. Skipping product.")
+                        continue
 
                 inventory.add_product(product)
 

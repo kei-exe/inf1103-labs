@@ -1,8 +1,18 @@
 [
     {
         "product_id": "P001",
-        "name": "Laptop",
-        "price": 1200.0,
-        "stock": 15
+        "name": "Mind Stone",
+        "price": 10.0,
+        "stock": 100,
+        "product_type": "physical",
+        "weight": 2.5
+    },
+    {
+        "product_id": "P002",
+        "name": "RAM",
+        "price": 10000.0,
+        "stock": 5,
+        "product_type": "digital",
+        "download_size": 500.0
     }
 ]
