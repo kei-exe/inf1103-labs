@@ -11,3 +11,12 @@ class DigitalProduct(Product):
 
     def get_fulfilment_info(self):
         return "This product is a digital download and does not require shipping/is digitally delivered."
+
+    def to_dict(self):
+        product_details = super().to_dict()
+    
+        # add to existing dict
+        product_details["product_type"] = "digital"
+        product_details["weight"] = self.__download_size
+    
+        return product_details

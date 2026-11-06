@@ -15,3 +15,12 @@ class PhysicalProduct(Product, CanBeShipped):
 
         def calculate_shipping_cost(self):
             return self.__weight * 2
+        
+        def to_dict(self):
+            product_details = super().to_dict()
+
+            # add to existing dict
+            product_details["product_type"] = "physical"
+            product_details["weight"] = self.__weight
+
+            return product_details
