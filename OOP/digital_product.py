@@ -17,6 +17,6 @@ class DigitalProduct(Product):
     
         # add to existing dict
         product_details["product_type"] = "digital"
-        product_details["weight"] = self.__download_size
+        product_details["download_size"] = self.__download_size
     
         return product_details
