@@ -5,6 +5,8 @@ import json
 # classes
 from product import Product
 from inventory import Inventory
+from physical_product import PhysicalProduct
+from digital_product import DigitalProduct
 
 # 1. get_valid_input(): Handles the prompt, handles input validation, and
 # returns a valid integer or a "quit" signal.
@@ -22,17 +24,43 @@ def display_input():
     displayInput = input("\nEnter option: ").strip()
 
     # check if -ve
-    if displayInput.startswith("-") and displayInput[1:].isdigit():
-        print("Stock quantity cannot be negative.")
-        return None
-        #check if not digit
-    elif not displayInput.isdigit():
-        print("Please enter a valid number for stock quantity.")
+    if displayInput.startswith("-") and displayInput[1:].isdigit() or not displayInput.isdigit():
+        print("Please enter a valid menu option.")
         return None
 
     return int(displayInput)
 
 def get_valid_input():
+    # select product type
+    print("Select Product Type:")
+    print("1. Physical Product")
+    print("2. Digital Product")
+
+    product_type = input("Enter product type: ").strip()
+
+    match product_type:
+        case "1":
+            print("Physical Product selected.")
+            extra_value = input("Enter weight (kg): ").strip()
+        case "2":
+            print("Digital Product selected.")
+            extra_value = input("Enter download size (MB): ").strip()
+        case _:
+            print("Invalid product type.")
+            return None
+
+    # validation for extra value
+    try:
+        extra_value = float(extra_value)
+
+        if extra_value < 0:
+            print("Value cannot be negative.")
+            return None
+
+    except ValueError:
+        print("Please input a valid number.")
+        return None
+    
     # name input
     stockName = input("Product Name: ").strip()
     
@@ -71,7 +99,7 @@ def get_valid_input():
         print("Please enter a valid number for stock quantity.")
         return None
 
-    return stockName, stockPrice, int(stockQty)
+    return product_type, stockName, stockPrice, int(stockQty), extra_value
 
 #load_inv
 def load_inventory(inventory: Inventory):
@@ -116,13 +144,14 @@ def handle_display_all(inventory: Inventory):
 def handle_add_product(inventory: Inventory):
     print("\nAdd New Product") # header
     print("==================") # separator line
+
     # Get user inputs
     new_order = get_valid_input()
 
     if new_order is None:
         return
 
-    stockName, stockPrice, stockQty = new_order
+    product_type, stockName, stockPrice, stockQty, extra_value = new_order
 
     # Generate product ID
     if inventory.get_all_products():
@@ -135,7 +164,11 @@ def handle_add_product(inventory: Inventory):
         orderID = "P001"
 
     # Create Product object
-    product = Product(orderID, stockName, stockPrice, stockQty)
+    match product_type:
+        case "1":
+            product = PhysicalProduct(orderID, stockName, stockPrice, stockQty, extra_value)
+        case "2":
+            product = DigitalProduct(orderID, stockName, stockPrice, stockQty, extra_value)
 
     # Add product to inventory
     inventory.add_product(product)
@@ -216,8 +249,8 @@ def main():
             case 4: # search product
                 handle_search_product(inventory)
             case 5: # save inventory
-                save_inventory(inventory)
                 print("\nSaving inventory...")
+                save_inventory(inventory)
                 print("Inventory saved successfully to inventory.json.")
             case 6: # exit
                 print("\nSaving inventory before exit...")
