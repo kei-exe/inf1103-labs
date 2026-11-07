@@ -5,3 +5,7 @@ class OrderLine:
         # Initialise the attributes
         self.__product = product
         self.__quantity = quantity
+
+    def calculate_subtotal(self) -> float:
+    # Return the product's price multiplied by the quantity
+        return self.__product.get_price() * self.__quantity

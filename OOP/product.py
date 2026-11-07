@@ -14,6 +14,10 @@ class Product(ABC):
     def get_fulfilment_info(self) -> str:
         pass
 
+    @property
+    def get_price(self) -> float:
+        return self.__price
+
     # Convert Product object into a dictionary for JSON storage
     def to_dict(self) -> dict:
 
