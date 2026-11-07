@@ -1,18 +1,31 @@
-from digital_product import DigitalProduct
-from physical_product import PhysicalProduct
 from supplier import Supplier
+from physical_product import PhysicalProduct
+from inventory import Inventory
 
 supplier = Supplier("S001", "Tech Supplies", "tech@example.com")
+physical = PhysicalProduct("P001", "Laptop", 1200.0, 5, 2.5, supplier)
 
-physical = PhysicalProduct(
-    "P001", "Laptop", 1200.0, 5, 2.5, supplier
-)
+# Create two inventories
+inventory_a = Inventory()
+inventory_b = Inventory()
 
-digital = DigitalProduct(
-    "P002", "Game", 30.0, 10, 500.0, supplier
-)
+# Add product to Inventory A
+inventory_a.add_product(physical)
+print("Inventory A before removal:")
+inventory_a.display_all()
 
-del supplier
+# Remove product from Inventory A
+inventory_a.remove_product("P001")
 
-print(physical.to_dict()["supplier"])
-print(digital.to_dict()["supplier"])
+print("\nInventory A after removal:")
+inventory_a.display_all()
+
+# Check if product still exists
+print("\nProduct after removal:")
+physical.display_information()
+
+# Add the same product to Inventory B
+inventory_b.add_product(physical)
+
+print("\nInventory B after transfer:")
+inventory_b.display_all()

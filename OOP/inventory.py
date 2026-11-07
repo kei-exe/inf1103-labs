@@ -2,7 +2,7 @@ from product import Product
 
 class Inventory:
     def __init__(self) -> None:
-        self.__products = list[Product] = [] # typed list 
+        self.__products: list[Product] = [] # typed list
 
     # Getter for list of Product objects stored in self.__products
     def get_all_products(self) -> list[Product]:
