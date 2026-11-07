@@ -13,7 +13,7 @@ class DigitalProduct(Product):
     def get_fulfilment_info(self) -> str:
         return "This product is a digital download and does not require shipping/is digitally delivered."
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         product_details = super().to_dict()
     
         # add to existing dict
