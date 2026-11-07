@@ -22,7 +22,7 @@ class Product(ABC):
             "name": self.__name,
             "price": self.__price,
             "stock": self.__stock,
-            "supplier": self.__supplier.display_information()  # Call the display_information method of the Supplier class
+            "supplier": self.__supplier.to_dict()
         }
 
         return product_details
