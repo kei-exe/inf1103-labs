@@ -1,31 +1,65 @@
 from supplier import Supplier
+from product import Product
 from physical_product import PhysicalProduct
-from inventory import Inventory
+from digital_product import DigitalProduct
+from order import Order
+
 
 supplier = Supplier("S001", "Tech Supplies", "tech@example.com")
-physical = PhysicalProduct("P001", "Laptop", 1200.0, 5, 2.5, supplier)
 
-# Create two inventories
-inventory_a = Inventory()
-inventory_b = Inventory()
+physical = PhysicalProduct(
+    "P001", "Laptop", 1200.0, 5, 2.5, supplier
+)
 
-# Add product to Inventory A
-inventory_a.add_product(physical)
-print("Inventory A before removal:")
-inventory_a.display_all()
+digital = DigitalProduct(
+    "P002", "Game", 30.0, 10, 500.0, supplier
+)
 
-# Remove product from Inventory A
-inventory_a.remove_product("P001")
 
-print("\nInventory A after removal:")
-inventory_a.display_all()
+# SECTION 4: COMPOSITION
 
-# Check if product still exists
-print("\nProduct after removal:")
-physical.display_information()
+print("\n=== COMPOSITION TEST ===")
 
-# Add the same product to Inventory B
-inventory_b.add_product(physical)
+order1 = Order("ORD001")
+order1.add_order_line(physical, 2)
+order1.add_order_line(digital, 3)
 
-print("\nInventory B after transfer:")
-inventory_b.display_all()
+print("Order 1 total:", order1.calculate_total())
+
+order2 = Order("ORD002")
+order2.add_order_line(physical, 1)
+
+print("Order 2 total:", order2.calculate_total())
+
+assert order1.calculate_total() == 2490.0
+assert order2.calculate_total() == 1200.0
+
+print("Composition tests passed!")
+
+
+# SECTION 6: LISKOV SUBSTITUTION PRINCIPLE
+
+print("\n=== LSP TEST ===")
+
+def show_product_details(product: Product) -> None:
+    product.display_information()
+    print(product.get_fulfilment_info())
+
+
+show_product_details(physical)
+show_product_details(digital)
+
+print("LSP tests passed!")
+
+
+# SECTION 7: POLYMORPHISM
+
+print("\n=== POLYMORPHISM TEST ===")
+
+products: list[Product] = [physical, digital]
+
+for product in products:
+    product.display_information()
+    print(product.get_fulfilment_info())
+
+print("Polymorphism tests passed!")
