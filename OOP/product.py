@@ -46,3 +46,6 @@ class Product(ABC):
             f"Stock: {self.__stock}",
             end=""
         )
+
+    def display_supplier_information(self) -> None:
+        self.__supplier.display_information()

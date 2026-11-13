@@ -3,6 +3,7 @@ import os
 import json
 
 # classes
+from supplier import Supplier
 from product import Product
 from inventory import Inventory
 from physical_product import PhysicalProduct
@@ -10,7 +11,7 @@ from digital_product import DigitalProduct
 
 # 1. get_valid_input(): Handles the prompt, handles input validation, and
 # returns a valid integer or a "quit" signal.
-def display_menu():
+def display_menu() -> None:
     print("\n------------- MENU -------------")
     print("1. Display All Products")
     print("2. Add Product")
@@ -20,7 +21,7 @@ def display_menu():
     print("6. Exit")
     print("----------------------------------")
 
-def display_input():
+def display_input() -> int | None:
     displayInput = input("\nEnter option: ").strip()
 
     # check if -ve
@@ -30,7 +31,7 @@ def display_input():
 
     return int(displayInput)
 
-def get_valid_input():
+def get_valid_input() -> tuple[str, str, float, int, float] | None:
     # select product type
     print("Select Product Type:")
     print("1. Physical Product")
@@ -102,7 +103,7 @@ def get_valid_input():
     return product_type, stockName, stockPrice, int(stockQty), extra_value
 
 #load_inv
-def load_inventory(inventory: Inventory):
+def load_inventory(inventory: Inventory) -> None:
     # check if json file exists
     if not os.path.exists("inventory.json"):
         return
@@ -111,6 +112,21 @@ def load_inventory(inventory: Inventory):
         with open("inventory.json", "r") as file:
             data = json.load(file)
             for item in data:
+                supplier_data = item.get("supplier")
+                if supplier_data is None:
+                    # Support older Lab 7 records without suppliers
+                    supplier = Supplier(
+                        "S000",
+                        "Legacy Supplier",
+                        "unknown@example.com"
+                    )
+                else:
+                    supplier = Supplier(
+                        supplier_data["supplier_id"],
+                        supplier_data["name"],
+                        supplier_data["contact_email"]
+                    )
+
                 match item["product_type"]:
                     case "physical":
                         # Create PhysicalProduct
@@ -119,7 +135,8 @@ def load_inventory(inventory: Inventory):
                             item["name"], 
                             item["price"], 
                             item["stock"], 
-                            item["weight"]
+                            item["weight"],
+                            supplier
                             )
 
                     case "digital":
@@ -129,7 +146,8 @@ def load_inventory(inventory: Inventory):
                             item["name"], 
                             item["price"], 
                             item["stock"], 
-                            item["download_size"]
+                            item["download_size"],
+                            supplier
                             )
 
                     case _:
@@ -142,7 +160,7 @@ def load_inventory(inventory: Inventory):
         print("Unable to load inventory.")
 
 # save_inv
-def save_inventory(inventory: Inventory):
+def save_inventory(inventory: Inventory) -> None:
     data = []
 
     for product in inventory.get_all_products():
@@ -153,13 +171,13 @@ def save_inventory(inventory: Inventory):
         json.dump(data, file, indent=4)
 
 # case functions
-def handle_display_all(inventory: Inventory):
+def handle_display_all(inventory: Inventory) -> None:
     print("\nCurrent Inventory")
     print("=======================================================")
     inventory.display_all()
     print("=======================================================")
 
-def handle_add_product(inventory: Inventory):
+def handle_add_product(inventory: Inventory) -> None:
     print("\nAdd New Product") # header
     print("==================") # separator line
 
@@ -181,12 +199,36 @@ def handle_add_product(inventory: Inventory):
     else:
         orderID = "P001"
 
+    supplier_id = input("Supplier ID: ").strip()
+    supplier_name = input("Supplier Name: ").strip()
+    supplier_email = input("Supplier Email: ").strip()
+
+    if not supplier_id or not supplier_name or not supplier_email:
+        print("All supplier details are required.")
+        return
+
+    supplier = Supplier(supplier_id, supplier_name, supplier_email)
+
     # Create Product object
     match product_type:
         case "1":
-            product = PhysicalProduct(orderID, stockName, stockPrice, stockQty, extra_value)
+            product = PhysicalProduct(
+                orderID, 
+                stockName, 
+                stockPrice,
+                stockQty, 
+                extra_value, 
+                supplier
+            )
         case "2":
-            product = DigitalProduct(orderID, stockName, stockPrice, stockQty, extra_value)
+            product = DigitalProduct(
+                orderID, 
+                stockName, 
+                stockPrice,
+                stockQty, 
+                extra_value, 
+                supplier
+            )
 
     # Add product to inventory
     inventory.add_product(product)
@@ -194,7 +236,7 @@ def handle_add_product(inventory: Inventory):
     print("Product ID:", orderID)
     print("\nProduct added successfully!")
 
-def handle_update_stock(inventory: Inventory):
+def handle_update_stock(inventory: Inventory) -> None:
     print("\nUpdate Stock")
 
     product_id = input("Enter Product ID: ").strip().upper()
@@ -219,7 +261,7 @@ def handle_update_stock(inventory: Inventory):
     result.update_stock(int(new_stock))
     print("\nStock updated successfully.")
 
-def handle_search_product(inventory: Inventory):
+def handle_search_product(inventory: Inventory) -> None:
     print("\nSearch Product")
     # Ask User for input
     product_id = input("Enter Product ID: ").strip().upper()

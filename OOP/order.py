@@ -14,6 +14,15 @@ class Order:
         order_line = OrderLine(product, quantity)
         self.__order_lines.append(order_line)
 
+    def get_order_lines(self) -> list[OrderLine]:
+        return self.__order_lines.copy()
+
+    def remove_order_line(self, index: int) -> None:
+        if index < 0 or index >= len(self.__order_lines):
+            raise IndexError("Order line index out of range")
+
+        self.__order_lines.pop(index)
+
     def calculate_total(self) -> float:
         total = 0.0
 

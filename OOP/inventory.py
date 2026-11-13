@@ -16,21 +16,23 @@ class Inventory:
     def remove_product(self, product_id: str) -> None:
         for product in self.__products:
             if product.to_dict()["product_id"] == product_id:
-                # Remove the product from the list
                 self.__products.remove(product)
                 return
 
     def search_product(self, product_id: str) -> Product | None:
-        for product in self.__products: # Loop through all products in self.__products
+        for product in self.__products:
             if product.to_dict()["product_id"] == product_id: # Check if product_id matches
-                return product # return if match
+                return product
 
-        return None # return nothing if don't match
+        return None
+
+    def find_product(self, product_id: str) -> Product | None:
+        return self.search_product(product_id)
 
     def display_all(self) -> None:
         if not self.__products: # Check if inventory empty
             print("Inventory is empty.")
             return
 
-        for product in self.__products: # Loop every product in self.__products
-            product.display_information() # Print product information
+        for product in self.__products:
+            product.display_information()
