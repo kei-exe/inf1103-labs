@@ -1,41 +1,36 @@
 
-from order import Order
-from supplier import Supplier
+from product_factory import ProductFactory
 from physical_product import PhysicalProduct
-from discount_strategy import (
-    NoDiscount,
-    PercentageDiscount,
-    BulkDiscount,
-    StudentDiscount
-)
+from digital_product import DigitalProduct
+from supplier import Supplier
 
 
-def test_order_discount() -> None:
-    """Test the different discounts applied to an order."""
+def test_factory() -> None:
+    """Test product creation and invalid product types."""
 
     supplier = Supplier("S001", "Test Supplier", "test@example.com")
 
-    product = PhysicalProduct(
-        "P001", "Keyboard", 50.0, 10, 1.0, supplier
+    physical = ProductFactory.create(
+        "physical", "P001", "Keyboard", 50.0, 10, supplier, 1.5
     )
 
-    order = Order("ORD001")
-    order.add_order_line(product, 5)
+    digital = ProductFactory.create(
+        "digital", "D001", "Game", 20.0, 100, supplier, 2.0
+    )
 
-    print("No Discount:", order.calculate_total())
+    assert isinstance(physical, PhysicalProduct)
+    assert isinstance(digital, DigitalProduct)
 
-    order.set_discount(PercentageDiscount(10))
-    print("Percentage Discount:", order.calculate_total())
+    print("Physical product created successfully.")
+    print("Digital product created successfully.")
 
-    order.set_discount(BulkDiscount(200, 20))
-    print("Bulk Discount:", order.calculate_total())
-
-    order.set_discount(StudentDiscount())
-    print("Student Discount:", order.calculate_total())
-
-    order.set_discount(NoDiscount())
-    print("Reset Discount:", order.calculate_total())
+    try:
+        ProductFactory.create(
+            "service", "S001", "Installation", 30.0, 5, supplier
+        )
+    except ValueError as error:
+        print(error)
 
 
 if __name__ == "__main__":
-    test_order_discount()
+    test_factory()
