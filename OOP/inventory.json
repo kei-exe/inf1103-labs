@@ -50,5 +50,18 @@
         },
         "product_type": "physical",
         "weight": 2.0
+    },
+    {
+        "product_id": "P005",
+        "name": "HDD",
+        "price": 7.0,
+        "stock": 3,
+        "supplier": {
+            "supplier_id": "002",
+            "name": "Liana John",
+            "contact_email": "LJMJ@hotmail.com"
+        },
+        "product_type": "digital",
+        "download_size": 100.0
     }
 ]

@@ -144,6 +144,56 @@ def load_products(path: str, inventory: Inventory, supplier: Supplier) -> None:
     finally:
         print("Load attempt finished.")
 
+def load_inventory(inventory: Inventory) -> None:
+    """Load saved products from inventory.json."""
+    if not os.path.exists("inventory.json"):
+        return
+
+    try:
+        with open("inventory.json", "r", encoding="utf-8") as file:
+            data: list[dict] = json.load(file)
+
+        for item in data:
+            supplier_data = item.get("supplier")
+
+            if supplier_data is None:
+                supplier = Supplier(
+                    "S000",
+                    "Legacy Supplier",
+                    "unknown@example.com"
+                )
+            else:
+                supplier = Supplier(
+                    supplier_data["supplier_id"],
+                    supplier_data["name"],
+                    supplier_data["contact_email"]
+                )
+
+            product_type: str = item["product_type"]
+
+            if product_type == "physical":
+                extra_value: float = float(item["weight"])
+            elif product_type == "digital":
+                extra_value = float(item["download_size"])
+            else:
+                print("Unknown product type. Skipping product.")
+                continue
+
+            product: Product = ProductFactory.create(
+                product_type,
+                item["product_id"],
+                item["name"],
+                float(item["price"]),
+                int(item["stock"]),
+                supplier,
+                extra_value
+            )
+
+            inventory.add_product(product)
+
+    except (json.JSONDecodeError, OSError, KeyError, TypeError, ValueError) as error:
+        print(f"Unable to load inventory: {error}")
+
 def save_inventory(inventory: Inventory) -> None:
     """Save all products to the JSON inventory file."""
     data: list[dict[str, object]] = []
