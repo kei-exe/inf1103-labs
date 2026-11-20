@@ -7,13 +7,10 @@ import csv
 from inventory import Inventory
 from supplier import Supplier
 from product import Product
-from physical_product import PhysicalProduct
-from digital_product import DigitalProduct
 from product_factory import ProductFactory
 
-# 1. get_valid_input(): Handles the prompt, handles input validation, and
-# returns a valid integer or a "quit" signal.
 def display_menu() -> None:
+    """Display the inventory menu."""
     print("\n------------- MENU -------------")
     print("1. Display All Products")
     print("2. Add Product")
@@ -24,7 +21,8 @@ def display_menu() -> None:
     print("----------------------------------")
 
 def display_input() -> int | None:
-    displayInput = input("\nEnter option: ").strip()
+    """Read and validate the selected menu option."""
+    displayInput: str = input("\nEnter option: ").strip()
 
     # check if -ve
     if displayInput.startswith("-") and displayInput[1:].isdigit() or not displayInput.isdigit():
@@ -48,20 +46,21 @@ def get_positive_float(prompt: str) -> float:
             print("Please enter a valid number, e.g. 12.50")
 
 def get_valid_input() -> tuple[str, str, float, int, float] | None:
+    """Collect and validate details for a new product."""
     # select product type
     print("Select Product Type:")
     print("1. Physical Product")
     print("2. Digital Product")
 
-    product_type = input("Enter product type: ").strip()
+    product_type: str = input("Enter product type: ").strip()
 
     match product_type:
         case "1":
             print("Physical Product selected.")
-            extra_value = input("Enter weight (kg): ").strip()
+            extra_value: str = input("Enter weight (kg): ").strip()
         case "2":
             print("Digital Product selected.")
-            extra_value = input("Enter download size (MB): ").strip()
+            extra_value: str = input("Enter download size (MB): ").strip()
         case _:
             print("Invalid product type.")
             return None
@@ -79,7 +78,7 @@ def get_valid_input() -> tuple[str, str, float, int, float] | None:
         return None
     
     # name input
-    stockName = input("Product Name: ").strip()
+    stockName: str = input("Product Name: ").strip()
     
     #check empty
     if not stockName:
@@ -94,7 +93,7 @@ def get_valid_input() -> tuple[str, str, float, int, float] | None:
     stockPrice: float = get_positive_float("Product Price: $")
 
     # qty input    
-    stockQty = input("Stock Quantity: ")
+    stockQty: str = input("Stock Quantity: ")
 
     # check if -ve
     if stockQty.startswith("-") and stockQty[1:].isdigit():
@@ -107,7 +106,6 @@ def get_valid_input() -> tuple[str, str, float, int, float] | None:
 
     return product_type, stockName, stockPrice, int(stockQty), extra_value
 
-#load_inv
 def load_products(path: str, inventory: Inventory, supplier: Supplier) -> None:
     """Load valid products from a CSV file into the inventory."""
     try:
@@ -146,9 +144,9 @@ def load_products(path: str, inventory: Inventory, supplier: Supplier) -> None:
     finally:
         print("Load attempt finished.")
 
-# save_inv
 def save_inventory(inventory: Inventory) -> None:
-    data = []
+    """Save all products to the JSON inventory file."""
+    data: list[dict[str, object]] = []
 
     for product in inventory.get_all_products():
         # Append dictionary to data
@@ -159,17 +157,19 @@ def save_inventory(inventory: Inventory) -> None:
 
 # case functions
 def handle_display_all(inventory: Inventory) -> None:
+    """Display all products currently in the inventory."""
     print("\nCurrent Inventory")
     print("=======================================================")
     inventory.display_all()
     print("=======================================================")
 
 def handle_add_product(inventory: Inventory) -> None:
+    """Collect product details and add a new product."""
     print("\nAdd New Product") # header
     print("==================") # separator line
 
     # Get user inputs
-    new_order = get_valid_input()
+    new_order: tuple[str, str, float, int, float] | None = get_valid_input()
 
     if new_order is None:
         return
@@ -186,15 +186,15 @@ def handle_add_product(inventory: Inventory) -> None:
     else:
         orderID = "P001"
 
-    supplier_id = input("Supplier ID: ").strip()
-    supplier_name = input("Supplier Name: ").strip()
-    supplier_email = input("Supplier Email: ").strip()
+    supplier_id: str = input("Supplier ID: ").strip()
+    supplier_name: str = input("Supplier Name: ").strip()
+    supplier_email: str = input("Supplier Email: ").strip()
 
     if not supplier_id or not supplier_name or not supplier_email:
         print("All supplier details are required.")
         return
 
-    supplier = Supplier(supplier_id, supplier_name, supplier_email)
+    supplier: Supplier = Supplier(supplier_id, supplier_name, supplier_email)
 
     # Create Product object
     match product_type:
@@ -221,7 +221,7 @@ def handle_update_stock(inventory: Inventory) -> None:
     """Handle updating a product's stock quantity."""
     print("\nUpdate Stock")
 
-    product_id = input("Enter Product ID: ").strip().upper()
+    product_id: str = input("Enter Product ID: ").strip().upper()
     result = inventory.search_product(product_id)
 
     if result is None:
@@ -232,7 +232,7 @@ def handle_update_stock(inventory: Inventory) -> None:
     print(f"Name: {result.to_dict()['name']}")
     print(f"Current Stock: {result.to_dict()['stock']}\n")
 
-    new_stock = input("New stock quantity: ").strip()
+    new_stock: str = input("New stock quantity: ").strip()
 
     # Validate new stock
     if not new_stock.isdigit():
@@ -247,9 +247,10 @@ def handle_update_stock(inventory: Inventory) -> None:
         print(error)
 
 def handle_search_product(inventory: Inventory) -> None:
+    """Search for a product by its ID."""
     print("\nSearch Product")
     # Ask User for input
-    product_id = input("Enter Product ID: ").strip().upper()
+    product_id: str = input("Enter Product ID: ").strip().upper()
     result = inventory.search_product(product_id)
 
     if result is None:
@@ -261,8 +262,9 @@ def handle_search_product(inventory: Inventory) -> None:
     result.display_information()
     print("=======================================================")
 
-def main():
-    inventory = Inventory()
+def main() -> None:
+    """Run the inventory management menu."""
+    inventory: Inventory = Inventory()
     load_inventory(inventory)
 
     #initial prints
@@ -282,7 +284,7 @@ def main():
     while True:
         # display menu
         display_menu()
-        userInput = display_input()
+        userInput: int | None = display_input()
 
         match userInput:
             case 1: # display all products
