@@ -32,6 +32,20 @@ def display_input() -> int | None:
 
     return int(displayInput)
 
+def get_positive_float(prompt: str) -> float:
+    """Keep asking until a valid positive number is entered."""
+    while True:
+        try:
+            value: float = float(input(prompt))
+
+            if value <= 0:
+                print("Please enter a number greater than zero.")
+            else:
+                return value
+
+        except ValueError:
+            print("Please enter a valid number, e.g. 12.50")
+
 def get_valid_input() -> tuple[str, str, float, int, float] | None:
     # select product type
     print("Select Product Type:")
@@ -76,18 +90,7 @@ def get_valid_input() -> tuple[str, str, float, int, float] | None:
         return None
 
     # Price input
-    stockPrice = input("Product Price: $").strip()
-
-    try:
-        stockPrice = float(stockPrice)
-
-        if stockPrice < 0:
-            print("Product price cannot be negative.")
-            return None
-
-    except ValueError:
-        print("Please enter a valid price.")
-        return None
+    stockPrice: float = get_positive_float("Product Price: $")
 
     # qty input    
     stockQty = input("Stock Quantity: ")
