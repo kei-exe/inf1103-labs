@@ -312,23 +312,6 @@ def handle_search_product(inventory: Inventory) -> None:
     result.display_information()
     print("=======================================================")
 
-def test_csv_loading() -> None:
-    """Test loading products from a CSV file."""
-    inventory: Inventory = Inventory()
-    supplier: Supplier = Supplier(
-        "S001",
-        "Test Supplier",
-        "test@example.com"
-    )
-
-    print("\nTesting valid CSV:")
-    load_products("products.csv", inventory, supplier)
-
-    print(f"Products loaded: {len(inventory.get_all_products())}")
-
-    print("\nTesting missing CSV:")
-    load_products("missing.csv", inventory, supplier)
-
 def main() -> None:
     """Run the inventory management menu."""
     inventory: Inventory = Inventory()
@@ -378,4 +361,4 @@ def main() -> None:
                 print("Invalid option. Please select a valid option from the menu.\n")
 
 if __name__ == "__main__":
-    test_csv_loading()
+    main()
