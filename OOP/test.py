@@ -1,4 +1,4 @@
-from input_helpers import get_positive_float
+from main import get_positive_float
 
 
 def main() -> None:
