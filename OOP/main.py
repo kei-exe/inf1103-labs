@@ -146,11 +146,11 @@ def load_products(path: str, inventory: Inventory, supplier: Supplier) -> None:
 
 def load_inventory(inventory: Inventory) -> None:
     """Load saved products from inventory.json."""
-    if not os.path.exists("inventory.json"):
+    if not os.path.exists("data/inventory.json"):
         return
 
     try:
-        with open("inventory.json", "r", encoding="utf-8") as file:
+        with open("data/inventory.json", "r", encoding="utf-8") as file:
             data: list[dict] = json.load(file)
 
         for item in data:
@@ -202,7 +202,7 @@ def save_inventory(inventory: Inventory) -> None:
         # Append dictionary to data
         data.append(product.to_dict())
 
-    with open("inventory.json", "w") as file:
+    with open("data/inventory.json", "w") as file:
         json.dump(data, file, indent=4)
 
 # case functions
@@ -323,11 +323,11 @@ def main() -> None:
     print("================================\n")
 
     # check if file exists and print appropriate message
-    if os.path.exists("inventory.json"):
-        print("inventory.json found.")
+    if os.path.exists("data/inventory.json"):
+        print("data/inventory.json found.")
         print("Inventory loaded successfully.")
     else:
-        print("inventory.json not found.")
+        print("data/inventory.json not found.")
         print("Starting with empty inventory.")
 
     #loop
