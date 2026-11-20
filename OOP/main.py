@@ -232,6 +232,7 @@ def handle_add_product(inventory: Inventory) -> None:
     print("\nProduct added successfully!")
 
 def handle_update_stock(inventory: Inventory) -> None:
+    """Handle updating a product's stock quantity."""
     print("\nUpdate Stock")
 
     product_id = input("Enter Product ID: ").strip().upper()
@@ -241,7 +242,7 @@ def handle_update_stock(inventory: Inventory) -> None:
         print("Product not found.")
         return
 
-    print("\n Product Found:")
+    print("\nProduct Found:")
     print(f"Name: {result.to_dict()['name']}")
     print(f"Current Stock: {result.to_dict()['stock']}\n")
 
@@ -253,8 +254,11 @@ def handle_update_stock(inventory: Inventory) -> None:
         return
 
     # Update stock
-    result.update_stock(int(new_stock))
-    print("\nStock updated successfully.")
+    try:
+        result.update_stock(int(new_stock))
+        print("\nStock updated successfully.")
+    except ValueError as error:
+        print(error)
 
 def handle_search_product(inventory: Inventory) -> None:
     print("\nSearch Product")
