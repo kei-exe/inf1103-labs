@@ -1,6 +1,7 @@
 # external
 import os
 import json
+import csv
 
 # classes
 from inventory import Inventory
@@ -107,61 +108,43 @@ def get_valid_input() -> tuple[str, str, float, int, float] | None:
     return product_type, stockName, stockPrice, int(stockQty), extra_value
 
 #load_inv
-def load_inventory(inventory: Inventory) -> None:
-    # check if json file exists
-    if not os.path.exists("inventory.json"):
-        return
-            
+def load_products(path: str, inventory: Inventory, supplier: Supplier) -> None:
+    """Load valid products from a CSV file into the inventory."""
     try:
-        with open("inventory.json", "r") as file:
-            data = json.load(file)
-            for item in data:
-                supplier_data = item.get("supplier")
-                if supplier_data is None:
-                    # Support older Lab 7 records without suppliers
-                    supplier = Supplier(
-                        "S000",
-                        "Legacy Supplier",
-                        "unknown@example.com"
+        file = open(path, "r", newline="", encoding="utf-8")
+
+    except FileNotFoundError:
+        print(f"File not found: {path}")
+
+    else:
+        with file:
+            reader = csv.DictReader(file)
+
+            for row in reader:
+                try:
+                    product_type: str = row["product_type"]
+                    product_id: str = row["product_id"]
+                    name: str = row["name"]
+                    price: float = float(row["price"])
+                    stock: int = int(row["stock_quantity"])
+
+                    product: Product = ProductFactory.create(
+                        product_type,
+                        product_id,
+                        name,
+                        price,
+                        stock,
+                        supplier
                     )
-                else:
-                    supplier = Supplier(
-                        supplier_data["supplier_id"],
-                        supplier_data["name"],
-                        supplier_data["contact_email"]
-                    )
 
-                match item["product_type"]:
-                    case "physical":
-                        # Create PhysicalProduct
-                        product = PhysicalProduct(
-                            item["product_id"],
-                            item["name"], 
-                            item["price"], 
-                            item["stock"], 
-                            item["weight"],
-                            supplier
-                            )
+                    inventory.add_product(product)
+                    print(f"Loaded: {name}")
 
-                    case "digital":
-                        # Create DigitalProduct
-                        product = DigitalProduct(
-                            item["product_id"],
-                            item["name"], 
-                            item["price"], 
-                            item["stock"], 
-                            item["download_size"],
-                            supplier
-                            )
+                except (ValueError, KeyError, TypeError) as error:
+                    print(f"Skipping invalid product: {error}")
 
-                    case _:
-                        print("Unknown product type. Skipping product.")
-                        continue
-
-                inventory.add_product(product)
-
-    except (json.JSONDecodeError, OSError, KeyError, TypeError, ValueError):
-        print("Unable to load inventory.")
+    finally:
+        print("Load attempt finished.")
 
 # save_inv
 def save_inventory(inventory: Inventory) -> None:
