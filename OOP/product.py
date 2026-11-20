@@ -1,11 +1,18 @@
-# import abstract class
 from abc import ABC, abstractmethod
 from supplier import Supplier
 
 class Product(ABC):
+    """Base class for physical and digital products."""
     def __init__(self, product_id: str, name: str, price: float, stock: int, supplier: Supplier) -> None:
         self.__product_id = product_id
         self.__name = name
+
+        if price <= 0:
+            raise ValueError("Price must be greater than zero.")
+
+        if stock < 0:
+            raise ValueError("Stock cannot be negative.")
+
         self.__price = price
         self.__stock = stock
         self.__supplier: Supplier = supplier
@@ -18,8 +25,8 @@ class Product(ABC):
     def get_price(self) -> float:
         return self.__price
 
-    # Convert Product object into a dictionary for JSON storage
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, object]:
+        """Convert the product details into a dictionary."""
 
         product_details = {
             "product_id": self.__product_id,
@@ -32,10 +39,10 @@ class Product(ABC):
         return product_details
 
     def update_stock(self, quantity: int) -> None:
+        """Update the stock quantity."""
         if quantity < 0:
-            print("Stock cannot be negative.")
-            return
-    
+            raise ValueError("Stock cannot be negative.")
+
         self.__stock = quantity
 
     def display_information(self) -> None:
