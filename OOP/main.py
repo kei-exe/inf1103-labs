@@ -2,12 +2,16 @@
 import os
 import json
 import csv
+from pathlib import Path
 
 # classes
 from inventory import Inventory
 from supplier import Supplier
 from product import Product
 from product_factory import ProductFactory
+
+DATA_DIR = Path(__file__).resolve().parent / "data"
+INVENTORY_FILE = DATA_DIR / "inventory.json"
 
 def display_menu() -> None:
     """Display the inventory menu."""
