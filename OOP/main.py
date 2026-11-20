@@ -3,11 +3,12 @@ import os
 import json
 
 # classes
+from inventory import Inventory
 from supplier import Supplier
 from product import Product
-from inventory import Inventory
 from physical_product import PhysicalProduct
 from digital_product import DigitalProduct
+from product_factory import ProductFactory
 
 # 1. get_valid_input(): Handles the prompt, handles input validation, and
 # returns a valid integer or a "quit" signal.
@@ -212,23 +213,17 @@ def handle_add_product(inventory: Inventory) -> None:
     # Create Product object
     match product_type:
         case "1":
-            product = PhysicalProduct(
-                orderID, 
-                stockName, 
-                stockPrice,
-                stockQty, 
-                extra_value, 
-                supplier
-            )
+            product_type = "physical"
         case "2":
-            product = DigitalProduct(
-                orderID, 
-                stockName, 
-                stockPrice,
-                stockQty, 
-                extra_value, 
-                supplier
-            )
+            product_type = "digital"
+        case _:
+            raise ValueError("Invalid product type.")
+
+    product: Product = ProductFactory.create(
+        product_type, orderID, stockName,
+        stockPrice, stockQty,
+        supplier, extra_value
+    )
 
     # Add product to inventory
     inventory.add_product(product)

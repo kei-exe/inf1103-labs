@@ -4,6 +4,11 @@
         "name": "Mind Stone",
         "price": 10.0,
         "stock": 100,
+        "supplier": {
+            "supplier_id": "S000",
+            "name": "Legacy Supplier",
+            "contact_email": "unknown@example.com"
+        },
         "product_type": "physical",
         "weight": 2.5
     },
@@ -12,6 +17,11 @@
         "name": "RAM",
         "price": 10000.0,
         "stock": 5,
+        "supplier": {
+            "supplier_id": "S000",
+            "name": "Legacy Supplier",
+            "contact_email": "unknown@example.com"
+        },
         "product_type": "digital",
         "download_size": 500.0
     },
@@ -20,7 +30,25 @@
         "name": "ROM",
         "price": 5.0,
         "stock": 10000,
+        "supplier": {
+            "supplier_id": "S000",
+            "name": "Legacy Supplier",
+            "contact_email": "unknown@example.com"
+        },
         "product_type": "digital",
         "download_size": 350.0
+    },
+    {
+        "product_id": "P004",
+        "name": "Macdonalds",
+        "price": 7.0,
+        "stock": 1,
+        "supplier": {
+            "supplier_id": "1",
+            "name": "Tan Aaron",
+            "contact_email": "ATA@gmail.com"
+        },
+        "product_type": "physical",
+        "weight": 2.0
     }
 ]
